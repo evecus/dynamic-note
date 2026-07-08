@@ -87,4 +87,4 @@ jobs:
           name: 灵动笔记 ${{ inputs.version }}
           prerelease: false
           make_latest: true
-          files: out/dynamic-note-${{ inputs.version }}.apk
+          files: out/灵动笔记-${{ inputs.version }}.apk
