@@ -1,7 +1,7 @@
 name: test
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -44,7 +44,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: test
-          name: "Debug build (test)"
+          name: 灵动笔记 "Debug build (test)"
           body: |
             自动构建的 Debug APK，用于测试。
             提交: ${{ github.sha }}
