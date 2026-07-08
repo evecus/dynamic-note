@@ -1,4 +1,4 @@
-name: Build Debug APK (Prerelease)
+name: test
 
 on:
   workflow_dispatch: {}
@@ -25,26 +25,6 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
-
-      # 校验 gradle-wrapper.jar 是否是有效且完整的 wrapper 启动器
-      # (曾出现过 jar 结构合法但 MANIFEST.MF 缺 Main-Class 导致
-      #  "no main manifest attribute" 报错的情况)
-      - name: Verify / repair gradle-wrapper.jar
-        run: |
-          jar_ok=true
-          if ! unzip -tq gradle/wrapper/gradle-wrapper.jar > /dev/null 2>&1; then
-            jar_ok=false
-          elif ! unzip -p gradle/wrapper/gradle-wrapper.jar META-INF/MANIFEST.MF 2>/dev/null | grep -q "^Main-Class:"; then
-            jar_ok=false
-          fi
-
-          if [ "$jar_ok" = false ]; then
-            echo "gradle-wrapper.jar 无效或缺少 Main-Class，重新生成..."
-            gradle wrapper --gradle-version 8.9
-            chmod +x ./gradlew
-          else
-            echo "gradle-wrapper.jar OK"
-          fi
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
