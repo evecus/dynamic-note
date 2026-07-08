@@ -1,4 +1,4 @@
-name: Build Signed Release APK
+name: build
 
 on:
   workflow_dispatch:
@@ -39,26 +39,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Verify / repair gradle-wrapper.jar
-        run: |
-          jar_ok=true
-          if ! unzip -tq gradle/wrapper/gradle-wrapper.jar > /dev/null 2>&1; then
-            jar_ok=false
-          elif ! unzip -p gradle/wrapper/gradle-wrapper.jar META-INF/MANIFEST.MF 2>/dev/null | grep -q "^Main-Class:"; then
-            jar_ok=false
-          fi
-
-          if [ "$jar_ok" = false ]; then
-            echo "gradle-wrapper.jar 无效或缺少 Main-Class，重新生成..."
-            gradle wrapper --gradle-version 8.9
-            chmod +x ./gradlew
-          else
-            echo "gradle-wrapper.jar OK"
-          fi
-
-      # 从输入的 v1.0.0 解析出:
-      #   VERSION_NAME = 1.0.0   (去掉开头的 v)
-      #   VERSION_CODE = 100     (去掉 v 和所有的 .)
       - name: Compute versionName / versionCode
         run: |
           raw="${{ inputs.version }}"
