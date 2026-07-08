@@ -1,0 +1,74 @@
+name: Build Debug APK (Prerelease)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # 校验 gradle-wrapper.jar 是否是有效且完整的 wrapper 启动器
+      # (曾出现过 jar 结构合法但 MANIFEST.MF 缺 Main-Class 导致
+      #  "no main manifest attribute" 报错的情况)
+      - name: Verify / repair gradle-wrapper.jar
+        run: |
+          jar_ok=true
+          if ! unzip -tq gradle/wrapper/gradle-wrapper.jar > /dev/null 2>&1; then
+            jar_ok=false
+          elif ! unzip -p gradle/wrapper/gradle-wrapper.jar META-INF/MANIFEST.MF 2>/dev/null | grep -q "^Main-Class:"; then
+            jar_ok=false
+          fi
+
+          if [ "$jar_ok" = false ]; then
+            echo "gradle-wrapper.jar 无效或缺少 Main-Class，重新生成..."
+            gradle wrapper --gradle-version 8.9
+            chmod +x ./gradlew
+          else
+            echo "gradle-wrapper.jar OK"
+          fi
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Move and rename APK
+        run: |
+          mkdir -p out
+          cp app/build/outputs/apk/debug/*.apk out/dynamic-note-debug.apk
+
+      - name: Move tag "test" to current commit
+        run: |
+          git tag -f test
+          git push origin test --force
+
+      # 用固定 tag "test" 发布/更新一个 prerelease，每次手动运行都会覆盖它
+      - name: Publish prerelease
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: test
+          name: "Debug build (test)"
+          body: |
+            自动构建的 Debug APK，用于测试。
+            提交: ${{ github.sha }}
+            构建时间: ${{ github.event.repository.updated_at }}
+          prerelease: true
+          make_latest: false
+          files: out/dynamic-note-debug.apk
