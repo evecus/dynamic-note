@@ -1,0 +1,82 @@
+name: Build Release APK
+ 
+on:
+  workflow_dispatch:
+ 
+jobs:
+  build:
+    name: Build & Sign APK
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+ 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+ 
+      # setup-gradle 会自动处理 wrapper jar 缺失的问题，
+      # 并根据 gradle-wrapper.properties 下载正确版本的 Gradle
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: 1
+        run: chmod +x gradlew
+
+      # 校验 gradle-wrapper.jar 是否是有效且完整的 wrapper 启动器
+      # (曾出现过 jar 结构合法但 MANIFEST.MF 缺 Main-Class 导致
+      #  "no main manifest attribute" 报错的情况)
+      - name: Verify / repair gradle-wrapper.jar
+        run: |
+          jar_ok=true
+          if ! unzip -tq gradle/wrapper/gradle-wrapper.jar > /dev/null 2>&1; then
+            jar_ok=false
+          elif ! unzip -p gradle/wrapper/gradle-wrapper.jar META-INF/MANIFEST.MF 2>/dev/null | grep -q "^Main-Class:"; then
+            jar_ok=false
+          fi
+
+          if [ "$jar_ok" = false ]; then
+            echo "gradle-wrapper.jar 无效或缺少 Main-Class，重新生成..."
+            gradle wrapper --gradle-version 8.9
+            chmod +x ./gradlew
+          else
+            echo "gradle-wrapper.jar OK"
+          fi
+ 
+      - name: Build release APK
+        run: ./gradlew assembleRelease --no-daemon
+ 
+      # ── 签名 ──────────────────────────────────────────────────────────────
+      # 将 keystore 文件以 Base64 存入 secret KEYSTORE_BASE64，
+      # 再配合下面三个 secret 完成签名。
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_apk
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "35.0.0"
+ 
+      # ── 上传产物 ───────────────────────────────────────────────────────────
+      - name: Upload signed APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NotesApp-release-signed
+          path: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+          retention-days: 30
+
+      # 如果触发来源是 tag，同时创建 GitHub Release 并附加 APK
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name:  dynamic-note v1.0.0
+          files: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+          generate_release_notes: true
