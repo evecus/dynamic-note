@@ -75,11 +75,6 @@ jobs:
           mkdir -p out
           cp "${{ steps.sign_apk.outputs.signedReleaseFile }}" out/灵动笔记-${{ inputs.version }}.apk
 
-      - name: Create tag
-        run: |
-          git tag -f "${{ inputs.version }}"
-          git push origin "${{ inputs.version }}" --force
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
