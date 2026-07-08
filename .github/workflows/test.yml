@@ -34,12 +34,6 @@ jobs:
           mkdir -p out
           cp app/build/outputs/apk/debug/*.apk out/灵动笔记-debug.apk
 
-      - name: Move tag "test" to current commit
-        run: |
-          git tag -f test
-          git push origin test --force
-
-      # 用固定 tag "test" 发布/更新一个 prerelease，每次手动运行都会覆盖它
       - name: Publish prerelease
         uses: softprops/action-gh-release@v2
         with:
@@ -51,4 +45,4 @@ jobs:
             构建时间: ${{ github.event.repository.updated_at }}
           prerelease: true
           make_latest: false
-          files: out/dynamic-note-debug.apk
+          files: out/灵动笔记-debug.apk
