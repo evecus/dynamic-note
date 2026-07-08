@@ -73,7 +73,7 @@ jobs:
       - name: Move and rename APK
         run: |
           mkdir -p out
-          cp "${{ steps.sign_apk.outputs.signedReleaseFile }}" out/dynamic-note-${{ inputs.version }}.apk
+          cp "${{ steps.sign_apk.outputs.signedReleaseFile }}" out/灵动笔记-${{ inputs.version }}.apk
 
       - name: Create tag
         run: |
