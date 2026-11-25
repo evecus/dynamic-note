@@ -73,13 +73,13 @@ jobs:
       - name: Move and rename APK
         run: |
           mkdir -p out
-          cp "${{ steps.sign_apk.outputs.signedReleaseFile }}" out/灵动笔记-${{ inputs.version }}.apk
+          cp "${{ steps.sign_apk.outputs.signedReleaseFile }}" out/dynamic-note-${{ inputs.version }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.version }}
-          name: 灵动笔记 ${{ inputs.version }}
+          name: Dynamic-Note ${{ inputs.version }}
           prerelease: false
           make_latest: true
-          files: out/灵动笔记-${{ inputs.version }}.apk
+          files: out/*.apk
