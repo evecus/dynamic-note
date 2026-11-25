@@ -1,0 +1,45 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 笔记本主体：圆润卡片 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,26 L72,26 A7,7 0 0 1 79,33 L79,79 A7,7 0 0 1 72,86 L32,86 A7,7 0 0 1 25,79 L25,33 A7,7 0 0 1 32,26 Z" />
+
+    <!-- 装订线 -->
+    <path
+        android:fillColor="#E3E6FF"
+        android:pathData="M38,32 L40,32 L40,80 L38,80 Z" />
+
+    <!-- 顶部珊瑚色装饰圆点 -->
+    <path
+        android:fillColor="#FF7E5F"
+        android:pathData="M52,42 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+
+    <!-- 文本行 -->
+    <path
+        android:fillColor="#C9CEF5"
+        android:pathData="M62,39 L70,39 A2,2 0 0 1 70,43 L62,43 A2,2 0 0 1 62,39 Z" />
+    <path
+        android:fillColor="#DADDF7"
+        android:pathData="M46,54 L70,54 A2,2 0 0 1 70,58 L46,58 A2,2 0 0 1 46,54 Z" />
+    <path
+        android:fillColor="#DADDF7"
+        android:pathData="M46,64 L64,64 A2,2 0 0 1 64,68 L46,68 A2,2 0 0 1 46,64 Z" />
+    <path
+        android:fillColor="#DADDF7"
+        android:pathData="M46,74 L68,74 A2,2 0 0 1 68,78 L46,78 A2,2 0 0 1 46,74 Z" />
+
+    <!-- 灵动笔尖 / 铅笔斜置 -->
+    <group android:rotation="-40" android:pivotX="80" android:pivotY="30">
+        <path
+            android:fillColor="#FFB199"
+            android:pathData="M76,14 L82,14 L82,32 L79,36 L76,32 Z" />
+        <path
+            android:fillColor="#FF7E5F"
+            android:pathData="M76,32 L82,32 L79,36 Z" />
+    </group>
+</vector>
