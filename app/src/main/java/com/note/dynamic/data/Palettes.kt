@@ -3,8 +3,8 @@ package com.note.dynamic.data
 import androidx.compose.ui.graphics.Color
 
 /**
- * 用于区分分组与笔记的视觉色板。
- * 分组采用柔和渐变卡片，笔记采用清爽的浅色调。
+ * 用于区分分组与便签的视觉色板。
+ * 分组采用柔和渐变卡片，便签采用清爽的浅色调。
  */
 object Palettes {
 
@@ -20,7 +20,7 @@ object Palettes {
         listOf(Color(0xFFD6E47E), Color(0xFF9BC158))    // 青柠
     )
 
-    /** 笔记：清爽浅色调 */
+    /** 便签：清爽浅色调 */
     val noteTints: List<Color> = listOf(
         Color(0xFFEAF0FE),
         Color(0xFFE8F6EF),
@@ -32,7 +32,7 @@ object Palettes {
         Color(0xFFF3EEE9)
     )
 
-    /** 笔记强调色（与 noteTints 一一对应） */
+    /** 便签强调色（与 noteTints 一一对应） */
     val noteAccents: List<Color> = listOf(
         Color(0xFF4F63D8),
         Color(0xFF2E9E72),

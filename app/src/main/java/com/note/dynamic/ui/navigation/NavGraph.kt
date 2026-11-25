@@ -13,9 +13,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.note.dynamic.ui.screens.HomeScreen
 import com.note.dynamic.ui.screens.NoteEditScreen
+import com.note.dynamic.ui.screens.SearchScreen
 
 object Routes {
     const val HOME = "home"
+    const val SEARCH = "search"
     const val GROUP = "group/{groupId}"
     fun group(id: Long) = "group/$id"
     const val NOTE_EDIT = "note/{noteId}"
@@ -41,7 +43,14 @@ fun NavGraph() {
                 groupId = null,
                 onOpenGroup = { id -> nav.navigate(Routes.group(id)) },
                 onOpenNote = { id -> nav.navigate(Routes.noteEdit(id)) },
-                onCreateNote = { gId -> nav.navigate(Routes.noteNew(gId)) }
+                onCreateNote = { gId -> nav.navigate(Routes.noteNew(gId)) },
+                onOpenSearch = { nav.navigate(Routes.SEARCH) }
+            )
+        }
+        composable(Routes.SEARCH) {
+            SearchScreen(
+                onBack = { nav.popBackStack() },
+                onOpenNote = { id -> nav.navigate(Routes.noteEdit(id)) }
             )
         }
         composable(
@@ -53,7 +62,8 @@ fun NavGraph() {
                 groupId = gId,
                 onOpenNote = { id -> nav.navigate(Routes.noteEdit(id)) },
                 onCreateNote = { nav.navigate(Routes.noteNew(gId)) },
-                onBack = { nav.popBackStack() }
+                onBack = { nav.popBackStack() },
+                onOpenSearch = { nav.navigate(Routes.SEARCH) }
             )
         }
         composable(

@@ -4,7 +4,7 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- 笔记本主体：圆润卡片 -->
+    <!-- 便签本主体：圆润卡片 -->
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M32,26 L72,26 A7,7 0 0 1 79,33 L79,79 A7,7 0 0 1 72,86 L32,86 A7,7 0 0 1 25,79 L25,33 A7,7 0 0 1 32,26 Z" />

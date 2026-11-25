@@ -24,16 +24,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
 import androidx.compose.material.icons.outlined.AttachFile
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -114,7 +112,7 @@ fun NoteEditScreen(
         if (currentId != 0L) return currentId
         val id = vm.saveNoteReturnId(
             Note(
-                title = title.ifBlank { "无标题笔记" },
+                title = title.ifBlank { "无标题便签" },
                 content = content,
                 groupId = presetGroupId,
                 colorIndex = colorIndex
@@ -138,7 +136,7 @@ fun NoteEditScreen(
                 vm.saveNoteReturnId(
                     Note(
                         id = id,
-                        title = title.ifBlank { "无标题笔记" },
+                        title = title.ifBlank { "无标题便签" },
                         content = content,
                         groupId = existingGroupId,
                         colorIndex = colorIndex
@@ -208,21 +206,11 @@ fun NoteEditScreen(
                         Spacer(Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = if (noteId == 0L) "新建笔记" else "编辑笔记",
+                                text = if (noteId == 0L) "新建" else "编辑",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
-                            Text(
-                                text = "自动保存 · 仅存本机",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
                         }
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { save() }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "返回")
                     }
                 },
                 actions = {
@@ -231,19 +219,6 @@ fun NoteEditScreen(
                     }
                     IconButton(onClick = { pickFile.launch(arrayOf("*/*")) }) {
                         Icon(Icons.Outlined.AttachFile, contentDescription = "插入文件")
-                    }
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.padding(end = 2.dp)
-                    ) {
-                        IconButton(onClick = { save() }) {
-                            Icon(
-                                Icons.Outlined.Check,
-                                contentDescription = "完成并保存",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -261,39 +236,19 @@ fun NoteEditScreen(
         ) {
             // ---------- Title ----------
             item {
-                Text(
-                    text = "标题",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-                )
                 PlainInput(
                     text = title,
                     onText = { title = it },
-                    placeholder = "给笔记起个名字…",
+                    placeholder = "给便签起个名字…",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     singleLine = true
                 )
                 Spacer(Modifier.height(12.dp))
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Palettes.noteTint(colorIndex),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Outlined.Description, contentDescription = null, tint = Palettes.noteAccent(colorIndex), modifier = Modifier.size(14.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = "内容 · 支持插入本机图片和文件",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-                Spacer(Modifier.height(8.dp))
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+                Spacer(Modifier.height(12.dp))
             }
 
             // ---------- Content body ----------
@@ -301,7 +256,7 @@ fun NoteEditScreen(
                 PlainInput(
                     text = content,
                     onText = { content = it },
-                    placeholder = "在这里写下你的想法…\n\n点击右上角图标可插入本机图片或文件",
+                    placeholder = "在这里写下你的想法…",
                     style = MaterialTheme.typography.bodyLarge.copy(lineHeight = 26.sp),
                     minLines = 6
                 )
@@ -349,42 +304,6 @@ fun NoteEditScreen(
                 }
             }
 
-            // ---------- Quick insert buttons ----------
-            item {
-                Spacer(Modifier.height(20.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        onClick = { pickImage.launch("image/*") },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(Icons.Outlined.Image, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
-                            Spacer(Modifier.width(8.dp))
-                            Text("添加图片", color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.labelLarge)
-                        }
-                    }
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        onClick = { pickFile.launch(arrayOf("*/*")) },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(Icons.AutoMirrored.Outlined.InsertDriveFile, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
-                            Spacer(Modifier.width(8.dp))
-                            Text("添加文件", color = MaterialTheme.colorScheme.onSecondaryContainer, style = MaterialTheme.typography.labelLarge)
-                        }
-                    }
-                }
-            }
         }
     }
 }
